@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FORECAST FUSION</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" integrity="sha384-wvfXpqpZZVQGK6EdA4CPdHcZr2UI5fksqbO5H9k3dYCG+T9x2B9PUtO5F8dG6NYKD" crossorigin="anonymous">
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-image: url('background.jpg'); 
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            text-align: center;
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        #app {
+            max-width: 400px;
+            background-color: rgba(255, 255, 255, 0.9);
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+            color: #333;
+        }
+
+        #weather-icon {
+            font-size: 80px;
+            margin-bottom: 20px;
+            color: #f39c12;
+        }
+
+        input {
+            padding: 10px;
+            margin: 10px 0;
+            width: 80%;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+
+        button {
+            padding: 12px;
+            background-color: #3498db;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        button:hover {
+            background-color: #2980b9;
+        }
+
+        #weather-info {
+            text-align: left;
+            margin-top: 20px;
+        }
+
+        #weather-info p {
+            font-size: 16px;
+            margin: 8px 0;
+        }
+    </style>
+</head>
+<body>
+    <div id="app">
+        <h2 style="margin-bottom: 20px; color: #2c3e50;">FORECAST FUSION</h2>
+        <input type="text" id="city" placeholder="Enter city name">
+        <button onclick="getWeather()">Get Weather <i class="fas fa-cloud-sun"></i></button>
+        <div id="weather-info"></div>
+        <i id="weather-icon" class="fas fa-sun"></i>
+    </div>
+
+    <script>
+        function getWeather() {
+            const apiKey = 'b6203b27d44a3996be142e936d6bd7ab';
+            const city = document.getElementById('city').value;
+            const apiUrl = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}`;
+
+            fetch(apiUrl)
+                .then(response => response.json())
+                .then(data => {
+                    const weatherInfo = document.getElementById('weather-info');
+                    const icon = document.getElementById('weather-icon');
+
+                    weatherInfo.innerHTML = `
+                        <p>Temperature: ${Math.round(data.main.temp - 273.15)}°C</p>
+                        <p>Weather: ${data.weather[0].description}</p>
+                        <p>Humidity: ${data.main.humidity}%</p>
+                    `;
+
+                    const iconCode = data.weather[0].icon;
+                    icon.className = `fas fa-${getWeatherIcon(iconCode)}`;
+                })
+                .catch(error => console.error('Error fetching weather data:', error));
+        }
+
+        function getWeatherIcon(iconCode) {
+            const iconMapping = {
+                '01d': 'sun',
+                '02d': 'cloud-sun',
+                '03d': 'cloud',
+                '04d': 'cloud',
+                '09d': 'cloud-showers-heavy',
+                '10d': 'cloud-rain',
+                '11d': 'bolt',
+                '13d': 'snowflake',
+                '50d': 'smog',
+                '01n': 'moon',
+                '02n': 'cloud-moon',
+                '03n': 'cloud',
+                '04n': 'cloud',
+                '09n': 'cloud-showers-heavy',
+                '10n': 'cloud-rain',
+                '11n': 'bolt',
+                '13n': 'snowflake',
+                '50n': 'smog',
+            };
+
+            return iconMapping[iconCode] || 'question';
+        }
+    </script>
+</body>
+</html>
